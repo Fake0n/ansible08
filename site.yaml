@@ -1,0 +1,57 @@
+---
+- name: Change site
+  hosts: all
+  become: true
+  tasks:
+    - name: Update packeges and install nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: latest
+        update_cache: yes
+
+    - name: Add nginx to autostart
+      ansible.builtin.service:
+        name: nginx
+        enabled: yes
+
+    - name: Copy config to server nginx
+      ansible.builtin.copy:
+        src: /home/user/task/DVPS-ANS-07/nginx.conf
+        dest: /etc/nginx/nginx.conf
+
+    - name: Delete default site and default html
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      loop:
+        - { path: "/etc/nginx/sites-enabled/default" }
+        - { path: "/var/www/html/index.nginx-debian.html" }
+
+    - name: Add config site
+      ansible.builtin.template:
+        src: /home/user/task/DVPS-ANS-07/site.conf.j2
+        dest: /etc/nginx/sites-available/site.conf
+
+    - name: Create symbolic link to web-site
+      ansible.builtin.file:
+        src: /etc/nginx/sites-available/site.conf
+        dest: /etc/nginx/sites-enabled/site.conf
+        state: link
+
+    - name: Create static html for products
+      ansible.builtin.template:
+        src: /home/user/task/template.yaml
+        dest: /home/user/task/{{ item.name | lower }}.html
+
+    - name: Copy html to server
+      ansible.builtin.copy:
+        src: /home/user/task/{{ item.name | lower }}.html
+        dest: /var/www/html/{{ item.name | lower }}.html
+
+    - name: 
+
+  handlers:
+    - name: reload nginx
+      ansible.builtin.service:
+        name: nginx
+        state: reload
