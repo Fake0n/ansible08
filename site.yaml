@@ -2,6 +2,9 @@
 - name: Change site
   hosts: all
   become: true
+  vars_files:
+    - /home/user/task/DVPS-ANS-07/products.yaml
+    
   tasks:
     - name: Update packeges and install nginx
       ansible.builtin.apt:
@@ -18,6 +21,7 @@
       ansible.builtin.copy:
         src: /home/user/task/DVPS-ANS-07/nginx.conf
         dest: /etc/nginx/nginx.conf
+        notify: reload nginx
 
     - name: Delete default site and default html
       ansible.builtin.file:
@@ -31,6 +35,7 @@
       ansible.builtin.template:
         src: /home/user/task/DVPS-ANS-07/site.conf.j2
         dest: /etc/nginx/sites-available/site.conf
+        notify: reload nginx
 
     - name: Create symbolic link to web-site
       ansible.builtin.file:
@@ -40,7 +45,7 @@
 
     - name: Create static html for products
       ansible.builtin.template:
-        src: /home/user/task/pages_html.yaml
+        src: /home/user/task/pages_html.j2
         dest: /home/user/task/{{ item.name | lower }}.html
 
     - name: Find html files
