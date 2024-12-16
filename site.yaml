@@ -61,7 +61,11 @@
         dest: "/var/www/html/"
       loop: "{{ found_files.files }}"
 
-    - name: Create main html
+    - name: Create main html for products
+      ansible.builtin.template:
+        src: /home/user/task/main_html.j2
+        dest: /home/user/task/{{ item.name | lower }}.html
+      loop: "{{ products }}"
 
   handlers:
     - name: reload nginx
