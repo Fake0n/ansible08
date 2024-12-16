@@ -43,12 +43,19 @@
         src: /home/user/task/template.yaml
         dest: /home/user/task/{{ item.name | lower }}.html
 
+    - name: Find html files
+      ansible.builtin.find:
+        paths: "/home/user/task/"
+        patterns: "*.html"
+      register: found_files
+      
     - name: Copy html to server
       ansible.builtin.copy:
-        src: /home/user/task/{{ item.name | lower }}.html
-        dest: /var/www/html/{{ item.name | lower }}.html
+        src: "{{ item.path }}"
+        dest: "/var/www/html/"
+      loop: "{{ found_files.files }}"
 
-    - name: 
+    - name: Create main html
 
   handlers:
     - name: reload nginx
