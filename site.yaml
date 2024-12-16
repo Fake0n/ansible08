@@ -40,7 +40,7 @@
 
     - name: Create static html for products
       ansible.builtin.template:
-        src: /home/user/task/template.yaml
+        src: /home/user/task/pages_html.yaml
         dest: /home/user/task/{{ item.name | lower }}.html
 
     - name: Find html files
