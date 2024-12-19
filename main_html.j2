@@ -28,11 +28,9 @@
 <body>
     <h1>Product List</h1>
     <ul class="product-list">
-                <li><a href="{{ item.name | lower }}.html">{{ item.name }}</a></li>
-                <li><a href="{{ item.name | lower }}.html">{{ item.name }}</a></li>
-                <li><a href="{{ item.name | lower }}.html">{{ item.name }}</a></li>
-                <li><a href="{{ item.name | lower }}.html">{{ item.name }}</a></li>
-                <li><a href="{{ item.name | lower }}.html">{{ item.name }}</a></li>
-            </ul>
+        {% for product in products | sort(attribute='name') %}
+        <li><a href="{{ product.name | lower }}.html">{{ product.name | capitalize }}</a></li>
+        {% endfor %}
+    </ul>
 </body>
 </html>
